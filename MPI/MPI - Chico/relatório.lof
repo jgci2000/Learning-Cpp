@@ -1,0 +1,7 @@
+\babel@toc {portuguese}{}
+\contentsline {figure}{\numberline {1}{\ignorespaces Decomposição do domínio\relax }}{2}{figure.caption.4}% 
+\contentsline {figure}{\numberline {2}{\ignorespaces Representação gráfica com as novas condições fronteira para 4 processos e um domínio global de 100x100.\relax }}{4}{figure.caption.5}% 
+\contentsline {figure}{\numberline {3}{\ignorespaces Representação gráfica com as condições fronteira antigas para 4 processos e um domínio global de 100x100.\relax }}{4}{figure.caption.6}% 
+\contentsline {figure}{\numberline {4}{\ignorespaces Representação das comunicações necessárias para o algorítmo.\relax }}{5}{figure.caption.7}% 
+\contentsline {figure}{\numberline {5}{\ignorespaces Gauss-Seidel num programa não paralelizado.\relax }}{7}{figure.caption.8}% 
+\contentsline {figure}{\numberline {6}{\ignorespaces Gauss-Seidel num programa paralelizado.\relax }}{8}{figure.caption.9}% 

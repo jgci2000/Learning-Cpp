@@ -1,0 +1,9 @@
+\babel@toc {portuguese}{}
+\contentsline {section}{\numberline {1}Introdução}{1}{section.1}% 
+\contentsline {section}{\numberline {2}Divisão do domínio global em subdomínios}{2}{section.2}% 
+\contentsline {section}{\numberline {3}Criação de códigos de paralelização}{2}{section.3}% 
+\contentsline {subsection}{\numberline {3.1}Escrita de resultados num ficheiro binário (alínea a)}{2}{subsection.3.1}% 
+\contentsline {subsection}{\numberline {3.2}Alteração das condições fronteira (alínea b)}{4}{subsection.3.2}% 
+\contentsline {subsection}{\numberline {3.3}Método de Jacobi com discretização com um estêncil de 9 pontos (alínea c)}{5}{subsection.3.3}% 
+\contentsline {subsection}{\numberline {3.4}Método de Gauss-Seidel paralelizado (alínea d)}{7}{subsection.3.4}% 
+\contentsline {section}{\numberline {4}Conclusão}{9}{section.4}% 

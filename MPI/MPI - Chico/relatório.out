@@ -1,0 +1,8 @@
+\BOOKMARK [1][-]{section.1}{Introdução}{}% 1
+\BOOKMARK [1][-]{section.2}{Divisão do domínio global em subdomínios}{}% 2
+\BOOKMARK [1][-]{section.3}{Criação de códigos de paralelização}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{Escrita de resultados num ficheiro binário \(alínea a\)}{section.3}% 4
+\BOOKMARK [2][-]{subsection.3.2}{Alteração das condições fronteira \(alínea b\)}{section.3}% 5
+\BOOKMARK [2][-]{subsection.3.3}{Método de Jacobi com discretização com um estêncil de 9 pontos \(alínea c\)}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.4}{Método de Gauss-Seidel paralelizado \(alínea d\)}{section.3}% 7
+\BOOKMARK [1][-]{section.4}{Conclusão}{}% 8

@@ -1,0 +1,163 @@
+%Document type
+\documentclass[10pt]{extarticle}
+
+\usepackage[
+margin=2.54cm
+%,showframe
+]{geometry} %package para configurar a geometria base das páginas
+\usepackage[table,xcdraw]{xcolor}
+\usepackage[portuguese]{babel} %package para o latex usar a lingua portuguesa
+\usepackage[utf8]{inputenc} %package dos acentos e assim
+\usepackage[T1]{fontenc} %package para existir hifenização correcta em passagens de linha
+\usepackage{libertine} %package para usar a font Libertine
+\usepackage[hyphens]{url} %package para criar line breaks nos urls, com parâmetro para reconhecer hífenes
+\usepackage[hidelinks,linktocpage]{hyperref} %package para poder criar hyperlinks/urls no PDF
+\usepackage{graphicx} %package para usar figuras
+\usepackage{float} %package para meter à força tabelas e figuras no sítio certo
+\usepackage{amsmath} %package para usar o ambiente de matemática
+\usepackage{tcolorbox} %package para criar caixas de texto coloridas
+\usepackage{fancyhdr} %package para modificar header, footer, page number, etc.
+\usepackage{enumitem} %package para configurar os parâmetros dos items num ambiente do tipo itemize
+\usepackage{changepage} %package para poder modificar a largura de páginas específicas
+\usepackage{eurosym} %package para poder usar o simbolo do euro com especificações de design correctas
+\usepackage{textcomp} %package para ter acesso a inúmeros símbolos não nativos ao latex
+\usepackage{threeparttable} %package para poder criar footnotes em tabelas
+\usepackage{caption} %package para configurar as captions
+\usepackage{subcaption} %package para configurar as subcaptions
+\usepackage{listings} %package para interpretar código doutras linguagens
+\usepackage{multirow} %package para ter tabelas com parâmetros que ocupam multiplas linhas
+\usepackage{empheq} %package para fazer equações por ramos
+\usepackage{mathtools} %package para usar 3 pontos verticais nas equações
+\usepackage{braket} %package para usar notação de Dirac
+\usepackage{bbold} %package para usar a matriz identidade
+%\usepackage{nicematrix} %package que melhora as matrizes
+\usepackage{tensor} %package para colocar índices nos quatro cantos duma letra
+\usepackage{listings} %package para introduzir codigo de linguagens correctamente
+\usepackage{xcolor} %package para definir cores
+\usepackage[ruled,vlined]{algorithm2e}
+
+%Document settings
+\hypersetup{pdfauthor={Francisco Resende},pdftitle={},pdfsubject={},pdfkeywords={}}
+\pagestyle{fancy} %atribuir ao documento a propriedade fancy page style
+\fancyhf{} %limpar os campos de texto do header e footer
+\renewcommand\headrulewidth{0pt} %tornar invisivel a linha do header
+\renewcommand\footrulewidth{0pt} %tornar invisivel a linha do footer
+\fancyfoot[c]{\thepage} %pôr o número correspondente a cada página em rodapé
+%\setlength{\footskip}{100pt} %define a distância entre os elementos do texto e o rodapé
+\renewcommand{\familydefault}{\sfdefault} %comando necessário para usar a package helvet
+\captionsetup[figure]{font=footnotesize} %configuração das captions para figures
+\captionsetup[table]{font=footnotesize} %configuração das captions para tables
+\raggedbottom %configuração para comprimir o texto para evitar espaços vazios entre linhas
+\setlength{\belowcaptionskip}{-1ex} %remove extra space after captions
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it} %Chancery Font (TeX Gyre Chorus OpenType Font) para escrever em tipo script(cursivo)
+\DeclareFontFamily{OT1}{pzc}{} %Necessário para inicializar a configuração do controlo do tamanho da font
+\DeclareFontShape{OT1}{pzc}{m}{it}{<-> s * [1.000] pzcmi7t}{} %Configuração de tamanho da font
+
+\begin{document}
+\begin{titlepage}
+	\begin{center}
+		
+		\vspace{3cm}
+		\Large
+		\textbf{Paralelização MPI de métodos iterativos de resolução da equação de Poisson}
+		
+		\normalsize
+		\vspace{0.5cm}
+		Computação Paralela
+		
+		\vspace{1.5cm}
+		\begin{tabular}{lr}
+			Francisco Resende & 84767 \\
+		\end{tabular}
+		
+		\vfill
+		
+		Departamento de Física\\
+		\vspace{0.1cm}
+		Universidade de Aveiro\\
+		\vspace{0.1cm}
+		03/07/2020
+	\end{center}
+\end{titlepage}
+
+\pagenumbering{Roman}
+\tableofcontents
+\cleardoublepage
+
+\listoftables
+\cleardoublepage
+
+\listoffigures
+\cleardoublepage
+
+\lstlistoflistings
+\cleardoublepage
+
+\pagenumbering{arabic}
+
+\section{Introdução} \label{sec:Intro}
+	
+ De forma a tentar perceber o porquê de existir a necessidade de aplicar paralelização dos métodos iterativos que resolvem a equação de Poisson, é necessário entender o que é a equação de Poisson e como funcionam os métodos iterativos que a resolvem. A equação de Poisson é uma equação diferencial que é comummente utilizada em áreas como a eletrostática, física teórica e engenharia mecânica, a equação de Poisson usada para este trabalho pode ser representada pela equação \ref{eq:Poisson}.
+ 
+ \begin{equation} \label{eq:Poisson}
+ \frac{d^2V(x,y)}{dx^2}+\frac{d^2V(x,y)}{dy^2}=f(x,y)
+ \end{equation}
+		
+onde
+
+ \begin{equation} \label{eq:myF}
+ f(x,y)=2-x^2-10y+50xy
+ \end{equation}
+ 
+Este tipo de equações de Poisson caracteriza-se, em 2D, como a soma das segundas derivadas parciais espaciais, sendo ela igual a uma função que depende das variáveis espaciais como se pode ver pela equação \ref{eq:Poisson} e pela equação \ref{eq:myF}.
+
+Dentre os variados métodos iterativos usados para resolução de sistemas lineares, pode-se destacar os métodos de Jacobi e Gauss-Siedel. O método de Jacobi apesar de apresentar uma convergência relativamente lenta, tem um bom funcionamento para sistemas esparsos. No entanto, este método não se comporta bem para todos os casos, para obter um melhor desempenho este método requer que os elementos da diagonal principal sejam não nulos. Mas para que este método seja aplicado à equação diferencial é preciso realizar a sua discretização, para isso foi aplicada uma aproximação por diferenças finitas com um estêncil de 5 pontos, como podemos ver na equação \ref{eq:difFinit5Pts} e com um estêncil de 9 pontos como demonstrado na equação \ref{eq:difFinit8Pts}. Sendo esta aproximação um método de discretização, significa que transforma uma função contínua numa representação discreta, ou seja uma representação ponto a ponto.
+
+  \begin{equation}  \label{eq:difFinit5Pts}
+  V^{(k+1)}(i,j)=\frac{1}{4}[V^{(k)}(i-1,j)+V^{(k)}(i,j-1)+V^{(k)}(i,j+1)     	                +V^{(k)}(i+1,j)-h^2f(i,j)]
+  \end{equation}
+		
+  \begin{equation}  \label{eq:difFinit8Pts}	
+  V^{(k+1)}(i,j)=\frac{1}{20}[V^{(k)}(i-1,j-)+4V^{(k)}(i-1,j)+V^{(k)}(i-1,j+1)     	                +4V^{(k)}(i,j-1)+4V^{(k)}(i,j+1)+V^{(k)}(i+1,j-1)
+                    +4V^{(k)}(i+1,j)+V^{(k)}(i+1,j+1)]-\frac{h^2}{40}[f(i-1,j)                                                                              	                +f(i,j-1)+8f(i,j)+f(i,j+1)+f(i+1,j)]
+  \end{equation}
+  
+O método de Gauss-Seidel, o segundo método usado neste trabalho, consiste num melhoramento do método de Jacobi que para calcular cada $V^{(k+1)}(i,1)$ usa a solução atual dos quatro vizinhos caso ela já tenha sido calculada, ou seja usa $V^{(k+1)}$ se j<i e $V^{(k+1)}$ se j>i. A expressão para este método pode ser representada pela equação \ref{eq:gaussSeidel}
+
+  \begin{equation}  \label{eq:gaussSeidel}
+   V^{(k+1)}(i,j)=\frac{1}{4}[V^{(k+1)}(i-1,j)+V^{(k+1)}(i,j-1)+V^{(k)}(i,j+1)     	                +V^{(k)}(i+1,j)-h^2f(i,j)]
+  \end{equation}
+		
+Apesar do método usar valores calculados na iteração atual e outros da iteração anterior, os primeiros valores calculados de cada iteração irão usar valores da iteração passada. Se este último método não for associado a um outro método de auxilio, não irá funcionar quando num programa paralelizado.
+
+Como é possível ver pelas equações \ref{eq:difFinit5Pts}, \ref{eq:difFinit8Pts} e \ref{eq:gaussSeidel} ambos os métodos percorrem todos os pontos do sistema o que faz com que o programa tenha uma complexidade de $n_x*n_y$, onde $n_x$ e $n_y$ são as dimensões do sistema. Como este tipo complexidade computacional aparece a necessidade de dividir o domínio global do sistema em subdomínios e para isso realizar a paralelização do programa. Neste trabalho a paralelização foi totalmente realizada em MPI. 
+		
+\section{Divisão do domínio global em subdomínios} \label{sec:global2Local}
+
+
+
+%\subsection{Sequential Addressing com Reverse Loop} \label{subsec:Sequential}
+
+
+
+%\subsection{Interleaved Addressing com Strided Index} %\label{subsec:Interleaved}
+
+
+
+%\subsection{Algoritmo de normalização}\label{subsec:Normalize}
+
+
+
+\section{Resultados obtidos e Análise}
+
+
+
+\section{Conclusão}
+
+
+
+\section{Bibliografia}
+
+
+
+\end{document}
